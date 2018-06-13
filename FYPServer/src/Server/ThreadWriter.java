@@ -44,6 +44,7 @@ public void run()
 		{
 			e.printStackTrace();
 		}	
+		Thread t=new Thread(new ThreadReader(socket));
 	}
 	if(standard.getMode().equals("in"))
 	{
@@ -52,13 +53,15 @@ public void run()
 				if(pattern.equals(standard.getName())){
 					OutputStream out=socket.getOutputStream();
 					out.write(data.get(pattern));
-			        data.remove(pattern);
+			        //data.remove(pattern);
+					data.remove(pattern, data.get(pattern));
 				}
 			}
 		}catch(IOException e)
 		{
 			e.printStackTrace();
 		}
+		Thread t=new Thread(new ThreadReader(socket));
 	}
 }
 }

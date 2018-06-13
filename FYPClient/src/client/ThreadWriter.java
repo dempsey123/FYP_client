@@ -16,6 +16,8 @@ import tuple.Tuple;
 
 public class ThreadWriter extends Thread {
 	private Socket socket;
+	
+	public static float sum=0;
 
 	public ThreadWriter(Socket socket)
 	{
@@ -30,6 +32,7 @@ public class ThreadWriter extends Thread {
 			//OutputStream os=socket.getOutputStream();
 			ObjectOutputStream oos=new ObjectOutputStream(socket.getOutputStream());
 			oos.writeObject(standard);
+			oos.flush();
 		}catch(IOException e)
 		{
 			e.printStackTrace();
@@ -43,15 +46,18 @@ public class ThreadWriter extends Thread {
 		{
 			ObjectOutputStream oos=new ObjectOutputStream(socket.getOutputStream());
 			oos.writeObject(standard);
+			oos.flush();
 			
-			 InputStream in=socket.getInputStream();
-			 byte[] s=new byte[1024];		 
-			 int len2=in.read(s);
-		     ByteArrayInputStream TransferBackToS=new ByteArrayInputStream(s);
-		     ObjectInputStream in2=new ObjectInputStream(TransferBackToS);
-		     Tuple t=(Tuple)in2.readObject();
+			System.out.println("-----------Waiting------------");  //print waiting message
+			InputStream in=socket.getInputStream();
+		    byte[] s=new byte[1024];		 
+			int len2=in.read(s);
+		    ByteArrayInputStream TransferBackToS=new ByteArrayInputStream(s);
+		    ObjectInputStream in2=new ObjectInputStream(TransferBackToS);
+		    Tuple t=(Tuple)in2.readObject();
 		     
-		     System.out.println("the get back number is:"+t.getNumber());
+		    System.out.println("the get back number is:"+t.getNumber());
+		    return;
 		}catch(IOException e)
 		{
 			e.printStackTrace();
@@ -63,11 +69,29 @@ public class ThreadWriter extends Thread {
 	
 	public void in(Standard standard)
 	{
+		//float sum=0;
 		try
 		{
 			ObjectOutputStream oos=new ObjectOutputStream(socket.getOutputStream());
-			oos.writeObject(standard);			
+			oos.writeObject(standard);		
+			oos.flush();
+			
+			System.out.println("-----------Waiting------------");  //print waiting message
+			InputStream in=socket.getInputStream();
+		    byte[] s=new byte[1024];		 
+			int len2=in.read(s);
+		    ByteArrayInputStream TransferBackToS=new ByteArrayInputStream(s);
+		    ObjectInputStream in2=new ObjectInputStream(TransferBackToS);
+		    Tuple t=(Tuple)in2.readObject();
+		    sum+=t.getNumber();
+		     
+		    System.out.println("the get back number is:"+t.getNumber());
+		    System.out.println("The total sum is:"+sum);
+		    return;
 		}catch(IOException e)
+		{
+			e.printStackTrace();
+		}catch(ClassNotFoundException e)
 		{
 			e.printStackTrace();
 		}
@@ -95,8 +119,8 @@ public class ThreadWriter extends Thread {
 	@Override
 	public void run()
 	{
-		try{
 		while(true){
+		try{
 			System.out.println("input the mode you are going to use: ");
 			Scanner input=new Scanner(System.in);
 			String mode=input.nextLine();
@@ -125,10 +149,10 @@ public class ThreadWriter extends Thread {
 			{
 				in(new Standard("in",name));
 			}
-		}
 		}catch(IOException e)
 		{
 			e.printStackTrace();
+		}
 		}
 		/*try{
 		Scanner input=new Scanner(System.in);

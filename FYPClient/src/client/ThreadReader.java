@@ -20,8 +20,9 @@ public class ThreadReader extends Thread {
 	@Override
 	public void run()
 	{
-		while(true)
-		{
+		float sum=0;
+		//while(true)
+		//{
 			try{
 				InputStream in=socket.getInputStream();
 				 byte[] s=new byte[1024];		 
@@ -30,7 +31,9 @@ public class ThreadReader extends Thread {
 			     ObjectInputStream in2=new ObjectInputStream(TransferBackToS);
 			     Tuple t=(Tuple)in2.readObject();
 			     
+			     sum+=t.getNumber();
 			     System.out.println("the get back number is:"+t.getNumber());
+			     System.out.println("Now the sum is:" +sum);
 			}catch(ClassNotFoundException e)
 			{
 				e.printStackTrace();
@@ -39,6 +42,6 @@ public class ThreadReader extends Thread {
 				e.printStackTrace();
 			}	
 			new ThreadWriter(socket).start();
-		}			
+		//}			
 	}
 }

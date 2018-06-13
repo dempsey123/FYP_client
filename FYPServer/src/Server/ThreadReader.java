@@ -25,12 +25,50 @@ public class ThreadReader extends Thread{
 		this.socket=socket;
 	}
 	
+	public int Search_in(Standard standard, Socket socket)
+	{
+		for(String pattern:data.keySet())
+		{
+			if(pattern.equals(standard.getName()))
+			{
+				try{
+					OutputStream out=socket.getOutputStream();
+					out.write(data.get(pattern));
+					data.remove(pattern,data.get(pattern));
+					return 1;
+				}catch(IOException e){
+					e.printStackTrace();
+				}			
+			}
+		}
+		return 0;
+	}
+	
+	public int Search_read(Standard standard,Socket socket)
+	{
+		 for(String pattern:data.keySet())
+			{
+				  if(pattern.equals(standard.getName()))
+				  {
+					  try{
+						  OutputStream out=socket.getOutputStream();
+						  out.write(data.get(pattern));
+						  return 1;
+					  }catch(IOException e)
+					  {
+						  e.printStackTrace();
+					  }
+				  }
+			}
+		 return 0;
+	}
+	
 	@Override
 	public void run()
 	{
 		//Object t=null;
-		try{
-			while(true){
+		while(true){
+			try{
 			  ObjectInputStream ois=new ObjectInputStream(socket.getInputStream());
 			  Standard standard=(Standard)ois.readObject();
 			  if(standard.getMode().equals("out"))
@@ -41,19 +79,41 @@ public class ThreadReader extends Thread{
 			  }
 			  else
 			  {
-				  Thread t=new Thread(new ThreadWriter(socket,standard,data));
-				  t.start();
+				  if(standard.getMode().equals("read"))
+				  {
+					  int b;
+					 while(true)
+					 {
+						 b=Search_read(standard,socket);
+						 if(b==1)
+						 {
+							 break;
+						 }
+					 }
+				  }
+				  if(standard.getMode().equals("in"))
+				  {
+					  int a;
+					  while(true)
+					  {
+						  a=Search_in(standard,socket);
+						  if(a==1)
+						  {
+							  break;
+						  }
+					  }
+				  }
 			  }	
+			}catch(IOException e)
+			{
+				e.printStackTrace();
+				//return;
+			}catch(ClassNotFoundException e)
+			{
+				e.printStackTrace();
+				//return;
 			}
 			//in.close();
-		}catch(IOException e)
-		{
-			e.printStackTrace();
-			return;
-		}catch(ClassNotFoundException e)
-		{
-			e.printStackTrace();
-			return;
 		}
 
 		
