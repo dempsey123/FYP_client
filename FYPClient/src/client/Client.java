@@ -15,8 +15,8 @@ public class Client {
 	{
 		Socket socket=new Socket("192.168.163.1",8888);
 		Thread t=new Thread(new ThreadWriter(socket));
-		Thread s=new Thread(new ThreadReader(socket));
+		//Thread s=new Thread(new ThreadReader(socket));
 		t.start();
-		s.start();
+		//s.start();
 	}
 }
